@@ -1,0 +1,7 @@
+# Projektdateien, die nicht ins Web gehören (Passwörter in .env, Compose, Doku)
+<FilesMatch "^(\.env.*|compose\.yml|README\.md|.*\.puml)$">
+    Require all denied
+</FilesMatch>
+
+# Manifest für "Zum Startbildschirm hinzufügen"
+AddType application/manifest+json .webmanifest

@@ -1,0 +1,1173 @@
+/* ==========================================================================
+   KFC Tippspiel – globales Theme
+   Aufbau: 1. Schriften  2. Variablen  3. Grundlagen  4. Header & Navigation
+           5. Inhalt & Karten  6. Knöpfe  7. Formulare  8. Meldungen (Toast)
+           9. Footer  10. Startseite  11. Barkeeper  12. Ranking
+           13. Präsentationsmodus  14. Desktop  15. Weniger Bewegung
+   Mobil zuerst: alles ist für 360–430 px gebaut, größere Bildschirme ab Abschnitt 14.
+   ========================================================================== */
+
+/* ===== 1. Schriften (lokal, funktioniert auch offline) ===== */
+@font-face {
+    font-family: 'Oswald';
+    src: url('../data/fonts/oswald-latin-600-normal.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../data/fonts/oswald-latin-700-normal.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* ===== 2. Variablen – hier Farben & Abstände ändern ===== */
+:root {
+    --kfc-schwarz: #070605;
+    --kfc-anthrazit: #15120e;
+    --kfc-karte: rgba(20, 16, 10, 0.86);
+    --kfc-karte-hell: rgba(40, 32, 20, 0.7);
+    --kfc-gold: #c9a24a;
+    --kfc-gold-hell: #f0d27a;
+    --kfc-gold-dunkel: #7a5a1c;
+    --kfc-silber: #d9d9d9;
+    --kfc-text: #efe6d2;
+    --kfc-text-leise: #b3a88f;
+    --ecke-rot: #c8102e;
+    --ecke-rot-dunkel: #6e0a19;
+    --ecke-gelb: #f2c230;
+    --ecke-gelb-dunkel: #7a5d0c;
+    --seil-weiss: #e9e4da;
+    --ring-boden: #4a2f36;
+    --live: #ff2a2a;
+    --ok: #3fbf6f;
+
+    /* glatter Metall-Verlauf (ohne Textur, wirkt auch bei großer Schrift sauber) */
+    --gold-verlauf: linear-gradient(180deg, #fff1c1 0%, #f0d27a 28%, #d1a94f 55%, #b48a36 72%, #e9c873 100%);
+    --silber-verlauf: linear-gradient(180deg, #ffffff 0%, #ececec 45%, #b9b9b9 70%, #e6e6e6 100%);
+
+    --schrift-display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    --schrift-titel: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    --schrift-text: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    --radius: 14px;
+    --radius-klein: 10px;
+    --abstand: 16px;
+    --max-breite: 760px;
+    --tipp-groesse: 48px;            /* Mindestgröße für alles, was man antippt */
+    --nav-hoehe: 64px;
+    --unten-sicher: env(safe-area-inset-bottom, 0px);
+    --schatten: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* ===== 3. Grundlagen ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--kfc-text);
+    background-color: var(--kfc-schwarz);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    min-height: 100dvh;
+    font-family: var(--schrift-text);
+    background-color: var(--kfc-schwarz);
+    overflow-x: hidden;
+    /* Platz für die Navigationsleiste unten (Handy) */
+    padding-bottom: calc(var(--nav-hoehe) + var(--unten-sicher));
+}
+
+/* Hintergrund: Halle bei Nacht, fest stehend (body::before statt background-attachment: fixed – geht auf iOS nicht) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(ellipse 60% 40% at 15% 0%, rgba(255, 240, 200, 0.16), transparent 70%),
+        radial-gradient(ellipse 60% 40% at 85% 0%, rgba(255, 240, 200, 0.16), transparent 70%),
+        linear-gradient(180deg, rgba(7, 6, 5, 0.72) 0%, rgba(7, 6, 5, 0.9) 45%, rgba(7, 6, 5, 0.97) 100%),
+        url('../data/bg/halle_mobile.jpg') center top / cover no-repeat,
+        var(--kfc-schwarz);
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    color: var(--kfc-gold-hell);
+    text-underline-offset: 3px;
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+:focus-visible {
+    outline: 3px solid var(--kfc-gold-hell);
+    outline-offset: 2px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.skip-link {
+    position: absolute;
+    left: -999px;
+    top: 8px;
+    z-index: 100;
+    padding: 8px 12px;
+    background: var(--kfc-gold);
+    color: #000;
+}
+
+.skip-link:focus {
+    left: 8px;
+}
+
+.icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+kbd {
+    padding: 1px 6px;
+    border: 1px solid var(--kfc-gold-dunkel);
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* ===== 4. Header & Navigation ===== */
+.kopf {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.96), rgba(10, 8, 5, 0.92));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.kicker {
+    display: none;
+    padding-top: 6px;
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--kfc-gold);
+}
+
+.kopf-zeile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 8px var(--abstand);
+    padding-top: max(8px, env(safe-area-inset-top));
+}
+
+.kopf-logo img {
+    height: 44px;
+    width: auto;
+    mix-blend-mode: lighten;        /* schwarzer Logo-Hintergrund verschwindet */
+}
+
+.nav-desktop {
+    display: none;
+}
+
+.kopf-profil {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.profil-knopf {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 6px 10px;
+    border: 1px solid rgba(201, 162, 74, 0.35);
+    border-radius: 999px;
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--kfc-silber);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.profil-knopf span {
+    max-width: 9ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profil-knopf .icon {
+    width: 18px;
+    height: 18px;
+}
+
+.profil-knopf.gold,
+.profil-knopf.aktiv {
+    border-color: var(--kfc-gold);
+    color: var(--kfc-gold-hell);
+}
+
+/* am Handy nur Icons für Admin/Freischalten, damit es passt */
+.kopf-profil .profil-knopf:not(:last-child) span {
+    display: none;
+}
+
+/* Seile unter dem Header: rot / weiß / blau wie in der Halle */
+.seile {
+    display: grid;
+    gap: 2px;
+    padding-bottom: 2px;
+}
+
+.seile span {
+    display: block;
+    height: 2px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset;
+}
+
+.seile span:nth-child(1) { background: linear-gradient(90deg, transparent, var(--ecke-rot) 15%, var(--ecke-rot) 85%, transparent); }
+.seile span:nth-child(2) { background: linear-gradient(90deg, transparent, #e9e4da 15%, #e9e4da 85%, transparent); opacity: 0.7; }
+.seile span:nth-child(3) { background: linear-gradient(90deg, transparent, var(--ecke-gelb) 15%, var(--ecke-gelb) 85%, transparent); }
+
+/* Navigationsleiste unten (Handy) – immer mit dem Daumen erreichbar */
+.nav-unten {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: calc(var(--nav-hoehe) + var(--unten-sicher));
+    padding-bottom: var(--unten-sicher);
+    background: rgba(7, 6, 5, 0.97);
+    border-top: 1px solid rgba(201, 162, 74, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: var(--tipp-groesse);
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--kfc-text-leise);
+    transition: color 0.2s;
+}
+
+.nav-link.aktiv {
+    color: var(--kfc-gold-hell);
+}
+
+.nav-unten .nav-link.aktiv::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 40px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--gold-verlauf);
+}
+
+.nav-unten .nav-link {
+    position: relative;
+}
+
+/* ===== 5. Inhalt & Karten ===== */
+.inhalt {
+    width: 100%;
+    max-width: var(--max-breite);
+    margin: 0 auto;
+    padding: 20px var(--abstand) 32px;
+}
+
+.karte {
+    margin-bottom: 20px;
+    padding: 20px var(--abstand);
+    border: 1px solid rgba(201, 162, 74, 0.35);
+    border-radius: var(--radius);
+    background: var(--kfc-karte);
+    box-shadow: var(--schatten);
+}
+
+@supports ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
+    .karte {
+        background: rgba(20, 16, 10, 0.72);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+}
+
+/* Goldtext wie das rissige "KFC" */
+.titel-gold {
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    font-size: clamp(1.7rem, 7.5vw, 2.6rem);
+    line-height: 1.1;
+    letter-spacing: 0.14em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--kfc-gold);
+    background: var(--gold-verlauf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.8));
+}
+
+.seitentitel {
+    margin-top: 4px;
+}
+
+.untertitel {
+    margin: 6px 0 16px;
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--kfc-text-leise);
+}
+
+/* "CHAMPIONSHIP"-Stil: gesperrt zwischen Goldlinien */
+.titel-linien {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-family: var(--schrift-titel);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--kfc-gold-hell);
+}
+
+.titel-linien::before,
+.titel-linien::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--kfc-gold));
+}
+
+.titel-linien::after {
+    background: linear-gradient(90deg, var(--kfc-gold), transparent);
+}
+
+/* ★ ★ ★ Krone ★ ★ ★ */
+.kfc-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 14px 0 18px;
+    color: var(--kfc-gold);
+}
+
+.kfc-divider .linie {
+    flex: 1;
+    max-width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--kfc-gold));
+}
+
+.kfc-divider .linie:last-child {
+    background: linear-gradient(90deg, var(--kfc-gold), transparent);
+}
+
+.kfc-divider .sterne {
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+}
+
+.kfc-divider .krone {
+    width: 28px;
+    height: 28px;
+    fill: var(--kfc-gold);
+}
+
+.leer-hinweis {
+    padding: 28px 12px;
+    text-align: center;
+    color: var(--kfc-text-leise);
+}
+
+.feld-hilfe {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--kfc-text-leise);
+}
+
+.cta-box {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.cta-box p {
+    margin-bottom: 10px;
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* ===== 6. Knöpfe ===== */
+.knopf {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: var(--tipp-groesse);
+    padding: 10px 20px;
+    border: 1px solid var(--kfc-gold);
+    border-radius: var(--radius-klein);
+    background: transparent;
+    font-family: var(--schrift-titel);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--kfc-gold-hell);
+    transition: transform 0.15s, background 0.2s, box-shadow 0.2s, opacity 0.2s;
+    touch-action: manipulation;
+}
+
+.knopf:active {
+    transform: scale(0.97);
+}
+
+.knopf:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.knopf-gold {
+    border-color: var(--kfc-gold-hell);
+    background: var(--gold-verlauf);
+    color: #1a1206;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 18px rgba(201, 162, 74, 0.3);
+}
+
+.knopf-rot {
+    border-color: #ff5a6e;
+    background: linear-gradient(180deg, #e01a3a, var(--ecke-rot-dunkel));
+    color: #fff;
+}
+
+.knopf-rahmen {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.knopf-breit {
+    width: 100%;
+}
+
+.knopf-klein {
+    min-height: 40px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+}
+
+.knopf-rund {
+    width: var(--tipp-groesse);
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.5rem;
+}
+
+/* ===== 7. Formulare ===== */
+.formular-karte {
+    max-width: 440px;
+    margin: 12px auto 20px;
+}
+
+.formular {
+    display: grid;
+    gap: 16px;
+}
+
+.feld {
+    display: grid;
+    gap: 6px;
+}
+
+.feld > span:first-child {
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kfc-gold);
+}
+
+/* mindestens 16px, sonst zoomt das iPhone beim Antippen */
+.feld input,
+.suche input {
+    width: 100%;
+    min-height: var(--tipp-groesse);
+    padding: 12px 14px;
+    border: 1px solid rgba(201, 162, 74, 0.45);
+    border-radius: var(--radius-klein);
+    background: rgba(0, 0, 0, 0.55);
+    color: var(--kfc-text);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.feld input:focus,
+.suche input:focus {
+    outline: none;
+    border-color: var(--kfc-gold-hell);
+    box-shadow: 0 0 0 3px rgba(240, 210, 122, 0.25);
+}
+
+.feld input.fehlerhaft {
+    border-color: var(--live);
+}
+
+.passwort-feld {
+    position: relative;
+    display: block;
+}
+
+.passwort-feld input {
+    padding-right: 52px;
+}
+
+.passwort-auge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--tipp-groesse);
+    height: 100%;
+    border: 0;
+    background: none;
+    color: var(--kfc-text-leise);
+}
+
+.passwort-auge.an {
+    color: var(--kfc-gold-hell);
+}
+
+.formular-fehler {
+    display: block;
+    padding: 8px 12px;
+    border-left: 3px solid var(--live);
+    border-radius: 4px;
+    background: rgba(255, 42, 42, 0.12);
+    color: #ffb3b3;
+    font-size: 0.9rem;
+}
+
+.formular-hinweis {
+    margin-top: 18px;
+    font-size: 0.92rem;
+    text-align: center;
+    color: var(--kfc-text-leise);
+}
+
+.erfolg-box {
+    display: grid;
+    gap: 14px;
+    text-align: center;
+}
+
+.erfolg-titel {
+    font-family: var(--schrift-titel);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--ok);
+}
+
+/* ===== 8. Meldungen (Toast) ===== */
+#toast-box {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--nav-hoehe) + var(--unten-sicher) + 84px);
+    z-index: 60;
+    display: grid;
+    gap: 8px;
+    width: min(92vw, 420px);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.toast {
+    padding: 12px 16px;
+    border: 1px solid var(--kfc-gold);
+    border-radius: var(--radius-klein);
+    background: rgba(15, 12, 8, 0.97);
+    box-shadow: var(--schatten);
+    font-weight: 600;
+    text-align: center;
+    animation: toast-rein 0.25s ease-out;
+    transition: opacity 0.35s, transform 0.35s;
+}
+
+.toast-ok { border-color: var(--ok); color: #c9f5d8; }
+.toast-fehler { border-color: var(--live); color: #ffc9c9; }
+
+.toast.weg {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes toast-rein {
+    from { opacity: 0; transform: translateY(10px); }
+}
+
+/* ===== 9. Footer ===== */
+.fuss {
+    max-width: var(--max-breite);
+    margin: 0 auto;
+    padding: 8px var(--abstand) 28px;
+    text-align: center;
+    color: var(--kfc-text-leise);
+    font-size: 0.85rem;
+}
+
+.slogan {
+    margin-bottom: 14px;
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--kfc-gold);
+}
+
+.fuss-teams {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 12px;
+}
+
+.fuss-teams img {
+    height: 56px;
+    width: auto;
+}
+
+.vs-klein {
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    color: var(--kfc-gold);
+}
+
+#presentation-clock {
+    display: none;
+}
+
+/* ===== 10. Startseite ===== */
+.hero {
+    margin: -20px calc(var(--abstand) * -1) 20px;
+    padding: 28px var(--abstand) 32px;
+    text-align: center;
+    background:
+        linear-gradient(180deg, rgba(7, 6, 5, 0.35), rgba(7, 6, 5, 0.85) 75%, var(--kfc-schwarz)),
+        url('../data/bg/clash_mobile.jpg') center 30% / cover no-repeat;
+}
+
+.hero-logo {
+    width: min(100%, 420px);
+    height: auto;
+    margin: 0 auto;
+    mix-blend-mode: lighten;
+}
+
+.hero-teams {
+    margin: 6px 0 18px;
+    font-family: var(--schrift-titel);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.team-rot { color: #ff6b7d; }
+.team-gelb { color: var(--ecke-gelb); }
+
+/* Goldrahmen wie "10.10" auf dem Plakat */
+.datum-box {
+    display: inline-grid;
+    justify-items: center;
+    margin: 0 auto 22px;
+    padding: 6px 22px 8px;
+    border: 1px solid var(--kfc-gold);
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.datum-gross {
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1.05;
+    background: var(--silber-verlauf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.datum-klein {
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--kfc-gold-hell);
+}
+
+.hero-knoepfe {
+    display: grid;
+    gap: 10px;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.schritte {
+    display: grid;
+    gap: 14px;
+    list-style: none;
+}
+
+.schritte li {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    column-gap: 12px;
+    align-items: start;
+}
+
+.schritt-icon {
+    grid-row: span 2;
+    width: 44px;
+    height: 44px;
+    padding: 9px;
+    border: 1px solid var(--kfc-gold);
+    border-radius: 50%;
+    color: var(--kfc-gold-hell);
+}
+
+.schritte h3 {
+    font-family: var(--schrift-titel);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kfc-silber);
+}
+
+.schritte p {
+    color: var(--kfc-text-leise);
+    font-size: 0.95rem;
+}
+
+.punkteregel {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 10px;
+    list-style: none;
+}
+
+.punkteregel li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.punkteregel small {
+    width: 100%;
+    padding-left: 54px;
+    margin-top: -8px;
+    color: var(--kfc-text-leise);
+}
+
+.punkte-chip {
+    display: inline-grid;
+    place-items: center;
+    min-width: 44px;
+    height: 36px;
+    border: 1px solid var(--kfc-gold);
+    border-radius: 8px;
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--kfc-gold-hell);
+}
+
+.punkte-chip.gold {
+    background: var(--gold-verlauf);
+    color: #1a1206;
+}
+
+.punkte-max {
+    font-weight: 700;
+}
+
+.plakat img {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    border: 1px solid rgba(201, 162, 74, 0.35);
+    border-radius: var(--radius);
+}
+
+/* ===== 11. Barkeeper (Freischalten) ===== */
+.suche {
+    position: relative;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.suche .icon {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: var(--kfc-text-leise);
+}
+
+.suche input {
+    padding-left: 46px;
+    font-size: 1.1rem;
+}
+
+.zaehler {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--kfc-text-leise);
+}
+
+.user-liste {
+    display: grid;
+    gap: 8px;
+    list-style: none;
+}
+
+.user-zeile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 8px 8px 14px;
+    border: 1px solid rgba(201, 162, 74, 0.25);
+    border-radius: var(--radius-klein);
+    background: rgba(0, 0, 0, 0.35);
+    transition: background 0.3s, opacity 0.3s;
+}
+
+.user-name {
+    overflow: hidden;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+}
+
+.user-zeile.erledigt {
+    background: rgba(63, 191, 111, 0.18);
+    opacity: 0.8;
+}
+
+.user-zeile.erledigt .knopf {
+    border-color: var(--ok);
+    background: var(--ok);
+    color: #04210f;
+}
+
+.user-zeile.fehler {
+    border-color: var(--live);
+}
+
+/* ===== 12. Ranking ===== */
+.champion {
+    display: grid;
+    justify-items: center;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.champion-guertel {
+    width: min(80%, 320px);
+    margin-bottom: 6px;
+}
+
+.champion-label {
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--kfc-gold);
+}
+
+.champion-name {
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+    line-height: 1.1;
+    background: var(--gold-verlauf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.champion-punkte {
+    color: var(--kfc-silber);
+}
+
+.ranking-karte {
+    padding: 8px;
+}
+
+.ranking-liste {
+    display: grid;
+    gap: 6px;
+    list-style: none;
+}
+
+.ranking-zeile {
+    display: grid;
+    grid-template-columns: 40px 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 6px 12px;
+    border-radius: var(--radius-klein);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.ranking-platz {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(201, 162, 74, 0.4);
+    border-radius: 50%;
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    color: var(--kfc-silber);
+}
+
+.platz-1 .ranking-platz { background: var(--gold-verlauf); color: #1a1206; border-color: var(--kfc-gold-hell); }
+.platz-2 .ranking-platz { background: var(--silber-verlauf); color: #222; border-color: #eee; }
+.platz-3 .ranking-platz { background: linear-gradient(180deg, #e8a66a, #8a4f1f); color: #1d0e02; border-color: #e8a66a; }
+
+.ranking-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ranking-tipps {
+    font-size: 0.8rem;
+    color: var(--kfc-text-leise);
+}
+
+.ranking-punkte {
+    min-width: 2.5ch;
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-align: right;
+    color: var(--kfc-gold-hell);
+}
+
+.ranking-zeile.ich {
+    border: 1px solid var(--kfc-gold);
+    background: rgba(201, 162, 74, 0.16);
+}
+
+.ich-label {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--kfc-gold);
+    color: #1a1206;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.ranking-regel {
+    text-align: center;
+}
+
+/* ===== 13. Präsentationsmodus (Beamer, Strg+Shift+P) ===== */
+body.presentation-mode {
+    padding-bottom: 0;
+}
+
+body.presentation-mode .kopf,
+body.presentation-mode .nav-unten,
+body.presentation-mode .skip-link,
+body.presentation-mode .live-hinweis,
+body.presentation-mode .fuss .kfc-divider,
+body.presentation-mode .fuss .slogan,
+body.presentation-mode .fuss-teams {
+    display: none;
+}
+
+body.presentation-mode .inhalt {
+    max-width: none;
+}
+
+body.presentation-mode #presentation-clock {
+    display: block;
+    position: fixed;
+    top: 14px;
+    right: 22px;
+    z-index: 50;
+    font-family: var(--schrift-display);
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--kfc-silber);
+}
+
+body.presentation-mode .fuss {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 10px 22px;
+    font-size: 1.1rem;
+    max-width: none;
+    text-align: left;
+}
+
+/* ===== 14. Größere Bildschirme ===== */
+@media (min-width: 600px) {
+    .kicker {
+        display: block;
+    }
+
+    .kopf-logo img {
+        height: 56px;
+    }
+
+    .kopf-profil .profil-knopf span {
+        display: inline;
+    }
+
+    .hero-knoepfe {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .schritte {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    body {
+        padding-bottom: 0;
+    }
+
+    body::before {
+        background:
+            radial-gradient(ellipse 50% 40% at 15% 0%, rgba(255, 240, 200, 0.16), transparent 70%),
+            radial-gradient(ellipse 50% 40% at 85% 0%, rgba(255, 240, 200, 0.16), transparent 70%),
+            linear-gradient(180deg, rgba(7, 6, 5, 0.7) 0%, rgba(7, 6, 5, 0.9) 50%, rgba(7, 6, 5, 0.97) 100%),
+            url('../data/bg/halle_desktop.jpg') center top / cover no-repeat,
+            url('../data/bg/halle_mobile.jpg') center top / cover no-repeat,
+            var(--kfc-schwarz);
+    }
+
+    /* Navigation wandert nach oben */
+    .nav-unten {
+        display: none;
+    }
+
+    .nav-desktop {
+        display: flex;
+        gap: 6px;
+    }
+
+    .nav-desktop .nav-link {
+        flex-direction: row;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        color: var(--kfc-silber);
+        font-style: oblique 8deg;
+    }
+
+    .nav-desktop .nav-link:hover,
+    .nav-desktop .nav-link.aktiv {
+        background: rgba(201, 162, 74, 0.14);
+        color: var(--kfc-gold-hell);
+    }
+
+    .hero {
+        border-radius: var(--radius);
+        margin: 0 0 24px;
+        background:
+            linear-gradient(180deg, rgba(7, 6, 5, 0.3), rgba(7, 6, 5, 0.85)),
+            url('../data/bg/clash_quer.jpg') center / cover no-repeat,
+            url('../data/bg/clash_mobile.jpg') center 30% / cover no-repeat;
+    }
+
+    #toast-box {
+        bottom: 96px;
+    }
+}
+
+/* ===== 15. Weniger Bewegung (Systemeinstellung) ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

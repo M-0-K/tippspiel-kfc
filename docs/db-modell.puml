@@ -1,0 +1,126 @@
+@startuml KFC_Tippspiel_DB
+title KFC Tippspiel – Datenbankmodell
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam class {
+  BackgroundColor #1a1a1a
+  BorderColor #c9a24a
+  FontColor #f2e6c9
+  AttributeFontColor #f2e6c9
+  HeaderBackgroundColor #c9a24a
+}
+skinparam ArrowColor #c9a24a
+skinparam NoteBackgroundColor #fff8e1
+skinparam NoteBorderColor #c9a24a
+
+entity "kampfnacht" as kampfnacht {
+  * Kid : int(11) <<PK>>
+  --
+  * Name : varchar(255)
+  * Datum : date
+    Ort : varchar(255)
+  * TeamRot : int(11) <<FK>>
+  * TeamGelb : int(11) <<FK>>
+}
+
+entity "team" as team {
+  * Teamid : int(11) <<PK>>
+  --
+  * Name : varchar(255)
+  * Abkuerzung : varchar(16)
+  * Bild : varchar(255)
+  * Farbe : varchar(7)
+}
+
+entity "kaempfer" as kaempfer {
+  * Kpid : int(11) <<PK>>
+  --
+  * Team : int(11) <<FK>>
+  * Name : varchar(255)
+    Spitzname : varchar(255)
+  * Bild : varchar(255) = 'none.png'
+}
+
+entity "kampf" as kampf {
+  * Kampfid : int(11) <<PK>>
+  --
+  * Kampfnacht : int(11) <<FK>>
+  * Reihenfolge : int(4)
+    Uhrzeit : datetime
+    Bezeichnung : varchar(255)
+    Gewichtsklasse : varchar(64)
+  * Runden : tinyint = 3
+  * Rot : int(11) <<FK>>
+  * Gelb : int(11) <<FK>>
+  * Status : tinyint = 0
+  * AktuelleRunde : tinyint = 0
+    Sieger : enum(ROT, GELB, UNENTSCHIEDEN)
+    Methode : enum(KO, PUNKTE, AUFGABE)
+    EndRunde : tinyint
+}
+
+entity "tipp" as tipp {
+  * Tippid : int(11) <<PK>>
+  --
+  * Kampfid : int(11) <<FK>>
+  * Userid : int(11) <<FK>>
+  * Sieger : enum(ROT, GELB, UNENTSCHIEDEN)
+    Methode : enum(KO, PUNKTE, AUFGABE)
+    Runde : tinyint
+  --
+  UNIQUE (Kampfid, Userid)
+}
+
+entity "user" as user {
+  * Userid : int(11) <<PK>>
+  --
+  * Username : varchar(255) <<UQ>>
+  * Password : varchar(255)
+  * Enabled : tinyint(1) = 0
+}
+
+kampfnacht ||--o{ kampf : "hat Kämpfe\n(Timeline nach Reihenfolge)"
+team ||--o{ kampfnacht : "rote Ecke\n(Rote Funken)"
+team ||--o{ kampfnacht : "gelbe Ecke\n(Lange Garde)"
+team ||--o{ kaempfer : "kämpft für"
+kaempfer ||--o{ kampf : "rote Ecke\n(Funken-Kämpfer)"
+kaempfer ||--o{ kampf : "gelbe Ecke\n(Garde-Kämpfer)"
+kampf ||--o{ tipp : "wird getippt"
+user ||--o{ tipp : "gibt ab"
+
+note right of kampf
+  Status: 0 = geplant (tippbar)
+          1 = läuft (Tipps gesperrt, AktuelleRunde zählt)
+          2 = beendet (Sieger/Methode/EndRunde gesetzt)
+  Methode KO = K.O./T.K.O.
+  Methode AUFGABE = Aufgabe/Disqualifikation
+  Bei PUNKTE oder UNENTSCHIEDEN: EndRunde = Runden
+  Regel: Rot.Team  = kampfnacht.TeamRot,
+         Gelb.Team = kampfnacht.TeamGelb
+end note
+
+note right of team
+  1 = Rote Funken (#c8102e, rote Ecke)
+  2 = Lange Garde (#f2c230, gelbe Ecke)
+  Teamstand = Anzahl gewonnener Kämpfe
+  (nur Anzeige, wird nicht getippt)
+end note
+
+note bottom of tipp
+  Punkte (nur Kämpfe mit Status = 2):
+  Sieger richtig            = 3
+  + Methode richtig         = +1
+  + Runde exakt (nur KO/AUFGABE) = +2
+  max. 6 Punkte pro Kampf
+  Unentschieden richtig     = 3 + 1
+end note
+
+note left of user
+  Rollen "Admin" und "Barkeeper"
+  stehen NICHT in der DB:
+  Passwörter aus ENV
+  (ADMIN_PASSWORD, BARKEEPER_PASSWORD)
+end note
+@enduml

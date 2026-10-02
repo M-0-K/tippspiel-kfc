@@ -1,0 +1,81 @@
+services:
+  web:
+    build:
+      context: ./docker
+    container_name: kfc_web
+    environment:
+      BARKEEPER_PASSWORD: "${BARKEEPER_PASSWORD:-changeme}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-changeme}"
+      CURRENT_KAMPFNACHT: "1"
+      PUBLIC_URL: "${PUBLIC_URL:-https://kulow-fighters.win}"
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: tippspiel
+      DB_USER: "${DB_USER:-webserver}"
+      DB_PASSWORD: "${DB_PASSWORD:-changeme}"
+    ports:
+      - "50090:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mariadb:10.11
+    container_name: kfc_mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-changeme}"
+      MYSQL_DATABASE: tippspiel
+      MYSQL_USER: "${DB_USER:-webserver}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:-changeme}"
+      TZ: Europe/Berlin
+    volumes:
+      - kfc_mysqldata:/var/lib/mysql
+      # führt DB/01_*.sql und DB/02_*.sql beim ersten Start aus (Unterordner wie DB/backup werden ignoriert)
+      - ./DB:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: kfc_phpmyadmin
+    ports:
+      - "50091:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: "${DB_USER:-webserver}"
+      PMA_PASSWORD: "${DB_PASSWORD:-changeme}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-changeme}"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: kfc_code-server
+    profiles:
+      - development
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Etc/UTC
+      DEFAULT_WORKSPACE: /var/www/html/
+    volumes:
+      - ./docker/csconfig:/config
+      - ./:/var/www/html
+    ports:
+      - "50092:8443"
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: kfc_cloudflared
+    profiles:
+      - "tunnel"
+    command: tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  kfc_mysqldata:

@@ -1,0 +1,11 @@
+# Linux-Zeilenenden für alles (wichtig für Docker/Linux-Server)
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary
+*.mp4 binary
+*.woff2 binary
+*.xcf binary
