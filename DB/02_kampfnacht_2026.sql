@@ -2,7 +2,7 @@
 -- Vorbereitung der Kampfnacht (Muster: VorbereitungWKC26.sql aus dem Kulowcup)
 --
 -- Vor dem Abend: Namen, Spitznamen und Bilder der Kämpfer eintragen.
--- Bilder liegen in data/kaempfer/ (z.B. 'max.jpg'). Ohne Bild: 'none_rot.png' bzw. 'none_gelb.png'.
+-- Bilder liegen in data/kaempfer/ (z.B. 'max.jpg'). Ohne Bild: 'none_rot.jpg' bzw. 'none_gelb.jpg'.
 -- Rote Ecke = immer ein Kämpfer der Roten Funken, gelbe Ecke = immer ein Kämpfer der Langen Garde.
 --
 -- Nach dem ersten Start ändern: in phpMyAdmin (http://localhost:50091), z.B.
@@ -22,23 +22,23 @@ INSERT INTO `kampfnacht` (`Kid`, `Name`, `Datum`, `Ort`, `TeamRot`, `TeamGelb`) 
 
 -- Kämpfer Rote Funken (1..7)
 INSERT INTO `kaempfer` (`Kpid`, `Team`, `Name`, `Spitzname`, `Bild`) VALUES
-(1, 1, 'Funken 1', NULL, 'none_rot.png'),
-(2, 1, 'Funken 2', NULL, 'none_rot.png'),
-(3, 1, 'Funken 3', NULL, 'none_rot.png'),
-(4, 1, 'Funken 4', NULL, 'none_rot.png'),
-(5, 1, 'Funken 5', NULL, 'none_rot.png'),
-(6, 1, 'Funken 6', NULL, 'none_rot.png'),
-(7, 1, 'Funken 7', NULL, 'none_rot.png');
+(1, 1, 'Funken 1', NULL, 'none_rot.jpg'),
+(2, 1, 'Funken 2', NULL, 'none_rot.jpg'),
+(3, 1, 'Funken 3', NULL, 'none_rot.jpg'),
+(4, 1, 'Funken 4', NULL, 'none_rot.jpg'),
+(5, 1, 'Funken 5', NULL, 'none_rot.jpg'),
+(6, 1, 'Funken 6', NULL, 'none_rot.jpg'),
+(7, 1, 'Funken 7', NULL, 'none_rot.jpg');
 
 -- Kämpfer Lange Garde (11..17)
 INSERT INTO `kaempfer` (`Kpid`, `Team`, `Name`, `Spitzname`, `Bild`) VALUES
-(11, 2, 'Garde 1', NULL, 'none_gelb.png'),
-(12, 2, 'Garde 2', NULL, 'none_gelb.png'),
-(13, 2, 'Garde 3', NULL, 'none_gelb.png'),
-(14, 2, 'Garde 4', NULL, 'none_gelb.png'),
-(15, 2, 'Garde 5', NULL, 'none_gelb.png'),
-(16, 2, 'Garde 6', NULL, 'none_gelb.png'),
-(17, 2, 'Garde 7', NULL, 'none_gelb.png');
+(11, 2, 'Garde 1', NULL, 'none_gelb.jpg'),
+(12, 2, 'Garde 2', NULL, 'none_gelb.jpg'),
+(13, 2, 'Garde 3', NULL, 'none_gelb.jpg'),
+(14, 2, 'Garde 4', NULL, 'none_gelb.jpg'),
+(15, 2, 'Garde 5', NULL, 'none_gelb.jpg'),
+(16, 2, 'Garde 6', NULL, 'none_gelb.jpg'),
+(17, 2, 'Garde 7', NULL, 'none_gelb.jpg');
 
 -- Auto-Increment nach oben schieben, damit neue Kämpfer nicht in den Bereich laufen
 ALTER TABLE `kaempfer` AUTO_INCREMENT = 100;

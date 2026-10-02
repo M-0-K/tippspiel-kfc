@@ -97,7 +97,7 @@ function auswahlKnoepfe(optionen, aktiv, beiKlick) {
 function ergebnisFormular(kampf) {
     const form = el('div', 'ergebnis-formular');
     form.appendChild(el('span', 'segment-label', 'Sieger'));
-    form.appendChild(auswahlKnoepfe([['ROT', kampf.rot.name], ['UNENTSCHIEDEN', 'Unentsch.'], ['GELB', kampf.gelb.name]], ergebnis.sieger, wert => {
+    form.appendChild(auswahlKnoepfe([['ROT', kampf.rot.name], ['UNENTSCHIEDEN', 'Remis'], ['GELB', kampf.gelb.name]], ergebnis.sieger, wert => {
         ergebnis.sieger = wert;
         if (wert === 'UNENTSCHIEDEN') {
             ergebnis.methode = 'PUNKTE';
@@ -107,7 +107,7 @@ function ergebnisFormular(kampf) {
 
     if (ergebnis.sieger && ergebnis.sieger !== 'UNENTSCHIEDEN') {
         form.appendChild(el('span', 'segment-label', 'Methode'));
-        form.appendChild(auswahlKnoepfe([['KO', 'K.O./T.K.O.'], ['PUNKTE', 'Punkte'], ['AUFGABE', 'Aufgabe/DQ']], ergebnis.methode, wert => {
+        form.appendChild(auswahlKnoepfe([['KO', 'K.O.'], ['PUNKTE', 'Punkte'], ['AUFGABE', 'Aufgabe']], ergebnis.methode, wert => {
             ergebnis.methode = wert;
             zeichneAlles();
         }));

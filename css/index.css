@@ -1171,3 +1171,13 @@ body.presentation-mode .fuss {
         scroll-behavior: auto !important;
     }
 }
+
+/* ===== Ergänzungen ===== */
+/* längere Hinweistexte unter Seitentiteln: normal geschrieben statt Versalien */
+.seiten-hinweis {
+    max-width: 52ch;
+    margin: 8px auto 18px;
+    font-size: 0.95rem;
+    text-align: center;
+    color: var(--kfc-text-leise);
+}

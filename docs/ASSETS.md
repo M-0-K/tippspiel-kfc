@@ -22,7 +22,7 @@ Diese Liste zeigt, welche Bilder die Webseite nutzt, welche schon da sind und we
 
 **Kür:**
 - [ ] #4 freigestellte Kämpfer `data/kaempfer/<name>_frei.png`
-- [ ] #6 Platzhalter-Silhouetten `data/kaempfer/none_rot.png`, `none_gelb.png` (es gibt schon einfache Platzhalter)
+- [ ] #6 Platzhalter-Silhouetten `data/kaempfer/none_rot.jpg`, `none_gelb.jpg` (es gibt schon einfache Platzhalter)
 - [ ] #9 `data/sieger_banner.png`
 - [ ] #10 `data/ko_splash.png`
 - [ ] #11 `data/champion_guertel.png`
@@ -148,7 +148,7 @@ Cinematic, dramatic, poster style, 16:9.
 ```
 
 ### #6 Platzhalter-Silhouetten (optional, einfache Version ist schon da)
-- **Dateien:** `data/kaempfer/none_rot.png`, `data/kaempfer/none_gelb.png` · **Format:** 900×1200 PNG
+- **Dateien:** `data/kaempfer/none_rot.jpg`, `data/kaempfer/none_gelb.jpg` · **Format:** 900×1200 PNG
 - **Wofür:** solange ein Kämpferbild fehlt
 - **Referenz:** `17.17.15 (2).jpeg`
 

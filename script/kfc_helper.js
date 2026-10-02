@@ -172,7 +172,7 @@ function kampfKopf(kampf) {
 // eine Ecke (rot oder gelb) mit Bild, Name und Team
 function ecke(kaempfer, farbe, tag) {
     const box = el(tag || 'div', 'ecke ecke-' + farbe);
-    const ersatz = '../../data/kaempfer/none_' + farbe + '.png';
+    const ersatz = '../../data/kaempfer/none_' + farbe + '.jpg';
     const bild = el('div', 'ecke-bild');
     bild.appendChild(bildMitErsatz(kaempferBild(kaempfer), ersatz, kaempfer.name));
     box.appendChild(bild);

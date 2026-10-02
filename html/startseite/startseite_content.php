@@ -9,7 +9,7 @@
 
     <div class="hero-knoepfe">
         <a class="knopf knopf-gold knopf-breit" href="../register/register.php">Jetzt registrieren</a>
-        <a class="knopf knopf-rahmen knopf-breit" href="../login/login.php">Ich habe schon ein Konto</a>
+        <a class="knopf knopf-rahmen knopf-breit" href="../login/login.php">Zum Login</a>
     </div>
 </section>
 

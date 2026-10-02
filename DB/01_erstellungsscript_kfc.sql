@@ -14,7 +14,7 @@ CREATE TABLE `team` (
   `Teamid` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(255) NOT NULL,
   `Abkuerzung` varchar(16) NOT NULL,
-  `Bild` varchar(255) NOT NULL DEFAULT 'none.png',
+  `Bild` varchar(255) NOT NULL DEFAULT 'none.jpg',
   `Farbe` varchar(7) NOT NULL DEFAULT '#c9a24a',
   PRIMARY KEY (`Teamid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44,7 +44,7 @@ CREATE TABLE `kaempfer` (
   `Team` int(11) NOT NULL,
   `Name` varchar(255) NOT NULL,
   `Spitzname` varchar(255) DEFAULT NULL,
-  `Bild` varchar(255) NOT NULL DEFAULT 'none.png',
+  `Bild` varchar(255) NOT NULL DEFAULT 'none.jpg',
   PRIMARY KEY (`Kpid`),
   CONSTRAINT `fk_kaempfer_team` FOREIGN KEY (`Team`) REFERENCES `team` (`Teamid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -9,7 +9,7 @@ function liveBild(kaempfer, farbe) {
     img.alt = kaempfer.name;
     const normal = kaempferBild(kaempfer);
     const frei = normal.replace(/\.(jpe?g|png|webp)$/i, '_frei.png');
-    const kandidaten = [frei, normal, '../../data/kaempfer/none_' + farbe + '.png'];
+    const kandidaten = [frei, normal, '../../data/kaempfer/none_' + farbe + '.jpg'];
     let i = 0;
     img.onerror = function () {
         i++;

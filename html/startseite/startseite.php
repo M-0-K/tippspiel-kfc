@@ -3,6 +3,9 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
+if (($_SESSION['KFC']['isadmin'] ?? false) === true) {
+    exit(header("Location: ../adminuebersicht/adminuebersicht.php"));
+}
 if (($_SESSION['KFC']['login'] ?? '') === 'ok') {
     exit(header("Location: ../tippen/tippen.php"));
 }

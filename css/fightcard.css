@@ -1008,3 +1008,40 @@ button.ecke:active {
         align-content: center;
     }
 }
+
+/* ===== Ergänzungen ===== */
+/* Segment-Knöpfe: Text nicht mitten im Wort umbrechen */
+.segment-knopf {
+    overflow-wrap: normal;
+    hyphens: none;
+    line-height: 1.15;
+}
+
+/* Liveansicht: Kämpferbilder an die Bildschirmhöhe anpassen, damit "Runde" immer sichtbar bleibt */
+.live-bild {
+    width: auto;
+    height: min(46dvh, 520px);
+    max-width: 100%;
+}
+
+@media (min-width: 1024px) {
+    body.presentation-mode .live-bild {
+        height: min(52dvh, 600px);
+    }
+
+    body.presentation-mode .live-buehne {
+        min-height: calc(100dvh - 210px);
+        padding-bottom: 56px;
+    }
+
+    /* Uhr über dem QR-Code statt über dem Teamstand */
+    body.presentation-mode #presentation-clock {
+        top: auto;
+        right: 24px;
+        bottom: 250px;
+        font-family: var(--schrift-display);
+        font-weight: 700;
+        font-size: 2.4rem;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+}

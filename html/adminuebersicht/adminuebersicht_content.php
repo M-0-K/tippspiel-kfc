@@ -1,5 +1,5 @@
 <h1 class="titel-gold seitentitel">Ringsteuerung</h1>
-<p class="untertitel">Kampf starten → Runden weiterschalten → Ergebnis eintragen. Gestartete Kämpfe sind sofort für Tipps gesperrt.</p>
+<p class="seiten-hinweis">Kampf starten → Runden weiterschalten → Ergebnis eintragen. Gestartete Kämpfe sind sofort für Tipps gesperrt.</p>
 
 <div class="admin-links">
     <a class="knopf knopf-rahmen" href="../liveview/liveview.php" target="_blank"><?= icon('live') ?> Liveansicht (Beamer)</a>
