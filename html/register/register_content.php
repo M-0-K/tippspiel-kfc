@@ -5,7 +5,8 @@
     <?php if ($erfolg) { ?>
         <div class="erfolg-box" role="status">
             <p class="erfolg-titel">Fast geschafft, <?= htmlspecialchars($usrName) ?>!</p>
-            <p>Geh jetzt zum <strong>Ausschank</strong> und lass dein Konto freischalten. Danach kannst du dich einloggen und tippen.</p>
+            <p>Jetzt nur noch freischalten lassen:<br><?= freischaltHinweis($usrName) ?></p>
+            <p class="feld-hilfe">Sobald dein Konto freigeschaltet ist, kannst du dich einloggen und tippen.</p>
             <a class="knopf knopf-gold knopf-breit" href="../login/login.php">Zum Login</a>
         </div>
     <?php } else { ?>

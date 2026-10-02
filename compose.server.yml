@@ -20,6 +20,7 @@ services:
       ADMIN_PASSWORD: "${ADMIN_PASSWORD:?ADMIN_PASSWORD in .env setzen}"
       CURRENT_KAMPFNACHT: "${CURRENT_KAMPFNACHT:-1}"
       PUBLIC_URL: "${PUBLIC_URL:-https://kulow-fighters.win}"
+      FREISCHALT_KONTAKT: "${FREISCHALT_KONTAKT:-Moritz}"
       DB_HOST: db
       DB_PORT: "3306"
       DB_NAME: tippspiel

@@ -218,6 +218,7 @@ Kpid 1–7 = Rote Funken, Kpid 11–17 = Lange Garde (siehe `DB/02_kampfnacht_20
 |---|---|---|
 | Gäste | QR-Code scannen → registrieren → tippen | Handy |
 | Ausschank | Login `Barkeeper` → Name suchen → **Freischalten** | Handy/Tablet am Tresen |
+| Vorab (PN) | Gäste schicken Moritz ihren Benutzernamen → als `Admin` oder `Barkeeper` → **Freischalten** (geht schon am Vorabend) | Handy |
 | Ring | Login `Admin` → **Kampf starten** → **Runde +** → **Kampf beenden** (Sieger, Methode, Runde) | Handy am Ring |
 | Beamer | `https://kulow-fighters.win/html/liveview/liveview.php` → `Strg + Shift + P` (Menü weg) | Laptop am Beamer |
 

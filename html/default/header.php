@@ -1,4 +1,4 @@
-<?php include_once __DIR__ . '/../../script/icons.php'; ?>
+<?php include_once __DIR__ . '/../../script/icons.php'; include_once __DIR__ . '/../../script/config.php'; ?>
 <!DOCTYPE html>
 <html lang="de">
 

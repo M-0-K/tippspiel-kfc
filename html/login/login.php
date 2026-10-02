@@ -44,7 +44,8 @@ if (isset($_GET['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: ../tippen/tippen.php");
             exit;
         } else {
-            $ErrorMSG = "Dein Konto ist noch nicht freigeschaltet. Geh kurz zum Ausschank – dort wird es freigeschaltet.";
+            $ErrorMSG = "Dein Konto ist noch nicht freigeschaltet.";
+            $nichtFreigeschaltet = true;
         }
     } else {
         $ErrorMSG = "Benutzername oder Passwort ist falsch.";

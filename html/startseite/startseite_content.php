@@ -24,7 +24,7 @@
         <li>
             <?= icon('crown', 'icon schritt-icon') ?>
             <h3>Freischalten</h3>
-            <p>Am <strong>Ausschank</strong> kurz Bescheid geben, dann wird dein Konto freigeschaltet.</p>
+            <p><?= freischaltHinweis() ?></p>
         </li>
         <li>
             <?= icon('bell', 'icon schritt-icon') ?>

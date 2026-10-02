@@ -22,7 +22,7 @@ Aufbau und Programmierstil sind wie beim [Tippspiel Kulowcup](https://github.com
 ## 🎯 So funktioniert's
 
 1. **Registrieren** auf der Webseite (Benutzername + Passwort)
-2. **Freischalten** am Ausschank (Barkeeper schaltet das Konto frei)
+2. **Freischalten**: per PN mit dem Benutzernamen an Moritz (Name über `FREISCHALT_KONTAKT` in `.env`) oder am Abend am Ausschank. Freischalten können `Barkeeper` und `Admin`.
 3. **Tippen** vor jedem Kampf: Sieger, Methode (K.O./T.K.O., Punkte, Aufgabe/DQ) und bei vorzeitigem Ende die Runde
 4. **Champion werden**: die meisten Punkte am Ende des Abends gewinnen
 

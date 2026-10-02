@@ -18,7 +18,9 @@
         </label>
 
         <?php if ($ErrorMSG !== "") { ?>
-            <p class="formular-fehler" role="alert"><?= htmlspecialchars($ErrorMSG) ?></p>
+            <p class="formular-fehler" role="alert"><?= htmlspecialchars($ErrorMSG) ?>
+                <?php if (!empty($nichtFreigeschaltet)) { ?><br><?= freischaltHinweis($username) ?><?php } ?>
+            </p>
         <?php } ?>
 
         <button class="knopf knopf-gold knopf-breit" type="submit" name="login">Login</button>
@@ -26,7 +28,7 @@
 
     <p class="formular-hinweis">
         Noch kein Konto? <a href="../register/register.php">Jetzt registrieren</a><br>
-        Danach dein Konto am <strong>Ausschank</strong> freischalten lassen – erst dann klappt der Login.
+        Danach muss dein Konto freigeschaltet werden: <?= freischaltHinweis() ?>
     </p>
 </section>
 
