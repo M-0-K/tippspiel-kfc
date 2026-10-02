@@ -1,0 +1,100 @@
+# KFC Tippspiel – Server-Variante (Linux) mit Cloudflare-Tunnel und VS Code im Browser
+# Start:   docker compose -f compose.server.yml up -d --build
+# Anleitung: docs/DEPLOYMENT.md
+#
+# Unterschiede zu compose.yml (lokale Entwicklung):
+#  - alle Dienste laufen immer (kein Profil nötig)
+#  - Ports nur auf 127.0.0.1 → von außen nur über den Cloudflare-Tunnel erreichbar
+#  - phpMyAdmin ohne Auto-Login, code-server mit Passwort
+#  - Healthcheck: Web startet erst, wenn die Datenbank bereit ist
+
+name: kfc
+
+services:
+  web:
+    build:
+      context: ./docker
+    container_name: kfc_web
+    environment:
+      BARKEEPER_PASSWORD: "${BARKEEPER_PASSWORD:?BARKEEPER_PASSWORD in .env setzen}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?ADMIN_PASSWORD in .env setzen}"
+      CURRENT_KAMPFNACHT: "${CURRENT_KAMPFNACHT:-1}"
+      PUBLIC_URL: "${PUBLIC_URL:-https://kulow-fighters.win}"
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: tippspiel
+      DB_USER: "${DB_USER:-webserver}"
+      DB_PASSWORD: "${DB_PASSWORD:?DB_PASSWORD in .env setzen}"
+      TZ: Europe/Berlin
+    ports:
+      - "127.0.0.1:50090:80"          # nur lokal; öffentlich über den Tunnel
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mariadb:10.11
+    container_name: kfc_mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD in .env setzen}"
+      MYSQL_DATABASE: tippspiel
+      MYSQL_USER: "${DB_USER:-webserver}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      TZ: Europe/Berlin
+    volumes:
+      - kfc_mysqldata:/var/lib/mysql
+      # legt beim ersten Start die Tabellen + Kampfnacht an (DB/01_*.sql, DB/02_*.sql)
+      - ./DB:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: kfc_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_ABSOLUTE_URI: "${PMA_URL:-}"
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "127.0.0.1:50091:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: kfc_code-server
+    environment:
+      PUID: "${PUID:-1000}"
+      PGID: "${PGID:-1000}"
+      TZ: Europe/Berlin
+      PASSWORD: "${CODE_SERVER_PASSWORD:?CODE_SERVER_PASSWORD in .env setzen}"
+      DEFAULT_WORKSPACE: /var/www/html
+    volumes:
+      - ./docker/csconfig:/config
+      - ./:/var/www/html
+    ports:
+      - "127.0.0.1:50092:8443"
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: kfc_cloudflared
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: "${CF_TUNNEL_TOKEN:?CF_TUNNEL_TOKEN in .env setzen}"
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  kfc_mysqldata:

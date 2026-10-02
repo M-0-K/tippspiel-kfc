@@ -110,6 +110,9 @@ docker compose up -d --build
 | code-server (optional) | `docker compose --profile development up -d` → http://localhost:50092 |
 | Cloudflare-Tunnel (optional) | `CF_TUNNEL_TOKEN` in `.env`, dann `docker compose --profile tunnel up -d` |
 
+**Auf einem Linux-Server mit Cloudflare-Tunnel, VS Code im Browser und phpMyAdmin:**
+→ Schritt-für-Schritt-Anleitung in **[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)** (nutzt `compose.server.yml`).
+
 Die Datenbank wird beim **ersten Start** automatisch aus `DB/01_…` und `DB/02_…` angelegt.
 Neu aufsetzen (⚠️ löscht alle User und Tipps): `docker compose down -v && docker compose up -d`.
 

@@ -1,7 +1,10 @@
-# Projektdateien, die nicht ins Web gehören (Passwörter in .env, Compose, Doku)
-<FilesMatch "^(\.env.*|compose\.yml|README\.md|.*\.puml)$">
+# Projektdateien, die nicht ins Web gehören (Passwörter in .env, Compose, Doku, Git)
+<FilesMatch "^(\..*|compose.*\.ya?ml|README\.md|.*\.puml|.*\.xcf)$">
     Require all denied
 </FilesMatch>
+
+# Versteckte Ordner (.git, .vscode) nicht ausliefern
+RedirectMatch 404 "/\.(git|vscode)(/|$)"
 
 # Manifest für "Zum Startbildschirm hinzufügen"
 AddType application/manifest+json .webmanifest
