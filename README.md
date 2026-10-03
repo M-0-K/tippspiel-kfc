@@ -128,6 +128,7 @@ Neu aufsetzen (⚠️ löscht alle User und Tipps): `docker compose down -v && d
 3. Ausschank: als `Barkeeper` einloggen → Konten per Suche freischalten.
 4. Ring: als `Admin` einloggen → **Kampf starten** (Tipps gesperrt) → **Runde +/−** → **Kampf beenden** (Sieger, Methode, Runde).
    Bei Fehlbedienung: **Zurücksetzen**.
+   Nach einem Testlauf: `DB/tools/testlauf_zuruecksetzen.sql` ausführen (löscht Tipps, setzt Kämpfe zurück).
 5. Beamer: Liveansicht öffnen, `Strg + Shift + P` blendet das Menü aus.
 6. Danach Backup ziehen und Server stoppen:
 
