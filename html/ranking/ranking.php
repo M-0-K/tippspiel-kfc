@@ -8,7 +8,7 @@ $PageTitle = "Ranking";
 $aktiveSeite = "ranking";
 function additionalHeaders(){?>
 <!-- define additional headers here -->
-<script type="text/javascript" src="./ranking.js" defer></script>
+<script type="text/javascript" src="<?= mitVersion('./ranking.js') ?>" defer></script>
 <?php }
 include_once('../default/header.php');
 include_once('../default/menu.php');

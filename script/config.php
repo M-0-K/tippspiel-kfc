@@ -14,6 +14,14 @@ if (!defined('PUBLIC_URL')) {
     define('PUBLIC_URL', getenv('PUBLIC_URL') ?: 'https://kulow-fighters.win');
 }
 
+// Datei-URL mit Änderungszeit (?v=...), damit Browser und Cloudflare nach einem Update
+// nicht die alte JS/CSS-Datei aus dem Cache nehmen. Pfad relativ zur aufgerufenen Seite.
+function mitVersion($pfad)
+{
+    $zeit = @filemtime($pfad);
+    return htmlspecialchars($pfad . ($zeit ? '?v=' . $zeit : ''));
+}
+
 // Hinweis zum Freischalten als HTML (Benutzername optional fett einsetzen)
 function freischaltHinweis($username = '')
 {

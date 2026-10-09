@@ -11,7 +11,7 @@ $PageTitle = "Admin";
 $aktiveSeite = "admin";
 function additionalHeaders(){?>
 <!-- define additional headers here -->
-<script type="text/javascript" src="./adminuebersicht.js" defer></script>
+<script type="text/javascript" src="<?= mitVersion('./adminuebersicht.js') ?>" defer></script>
 <?php }
 include_once('../default/header.php');
 include_once('../default/menu.php');

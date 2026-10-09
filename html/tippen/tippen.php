@@ -15,7 +15,7 @@ function additionalHeaders(){
     global $kannTippen;
     if ($kannTippen) { ?>
 <!-- define additional headers here -->
-<script type="text/javascript" src="./tippen.js" defer></script>
+<script type="text/javascript" src="<?= mitVersion('./tippen.js') ?>" defer></script>
 <?php }
 }
 include_once('../default/header.php');

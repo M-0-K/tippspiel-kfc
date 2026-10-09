@@ -12,7 +12,7 @@ $PageTitle = "Kampfabend";
 $aktiveSeite = "kampfabend";
 function additionalHeaders(){?>
 <!-- define additional headers here -->
-<script type="text/javascript" src="./kampfabend.js" defer></script>
+<script type="text/javascript" src="<?= mitVersion('./kampfabend.js') ?>" defer></script>
 <?php }
 include_once('../default/header.php');
 include_once('../default/menu.php');

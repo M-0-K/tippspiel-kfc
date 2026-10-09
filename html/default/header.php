@@ -15,10 +15,10 @@
     <link rel="icon" href="../../favicon.ico" sizes="any">
     <link rel="icon" href="../../data/logo/icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="../../data/logo/icon-192.png">
-    <link href="../../css/index.css" rel="stylesheet">
-    <link href="../../css/fightcard.css" rel="stylesheet">
+    <link href="<?= mitVersion('../../css/index.css') ?>" rel="stylesheet">
+    <link href="<?= mitVersion('../../css/fightcard.css') ?>" rel="stylesheet">
     <title><?= isset($PageTitle) ? htmlspecialchars($PageTitle) . " · KFC Tippspiel" : "KFC Tippspiel" ?></title>
-    <script src="../../script/kfc_helper.js"></script>
+    <script src="<?= mitVersion('../../script/kfc_helper.js') ?>"></script>
     <!-- additional Headers -->
     <?php if (function_exists('additionalHeaders')){
         additionalHeaders();

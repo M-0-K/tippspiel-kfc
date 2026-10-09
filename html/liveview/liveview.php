@@ -16,7 +16,7 @@ function additionalHeaders(){
 <!-- define additional headers here -->
 <script src="../../script/qrcode.min.js" defer></script>
 <script>var PUBLIC_URL = <?= json_encode($publicUrl) ?>;</script>
-<script type="text/javascript" src="./liveview.js" defer></script>
+<script type="text/javascript" src="<?= mitVersion('./liveview.js') ?>" defer></script>
 <?php }
 include_once('../default/header.php');
 include_once('../default/menu.php');
