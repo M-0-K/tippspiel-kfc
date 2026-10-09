@@ -219,6 +219,53 @@ function kampfKarte(kampf, mitKnoepfen) {
     return karte;
 }
 
+// Zuschauer-Favorit: Balken, wie oft auf Rot / Unentschieden / Gelb getippt wurde
+function favoritLeiste(kampf) {
+    const stand = kampf.tippstand || { rot: 0, gelb: 0, unentschieden: 0, gesamt: 0 };
+    const box = el('div', 'favorit');
+    const kopf = el('div', 'favorit-kopf');
+    box.appendChild(kopf);
+
+    if (stand.gesamt === 0) {
+        kopf.appendChild(el('span', 'favorit-label', 'Zuschauer-Favorit'));
+        kopf.appendChild(el('span', 'favorit-anzahl', 'Noch keine Tipps'));
+        box.appendChild(el('div', 'favorit-balken'));
+        return box;
+    }
+
+    let label = 'Zuschauer: ausgeglichen';
+    if (stand.rot > stand.gelb) {
+        label = 'Zuschauer-Favorit: ' + kampf.rot.name;
+    } else if (stand.gelb > stand.rot) {
+        label = 'Zuschauer-Favorit: ' + kampf.gelb.name;
+    }
+    kopf.appendChild(el('span', 'favorit-label', label));
+    kopf.appendChild(el('span', 'favorit-anzahl', stand.gesamt + (stand.gesamt === 1 ? ' Tipp' : ' Tipps')));
+
+    // Gelb als Rest, damit die Prozente zusammen immer 100 ergeben
+    const rotProzent = Math.round(stand.rot * 100 / stand.gesamt);
+    const remisProzent = Math.round(stand.unentschieden * 100 / stand.gesamt);
+    const gelbProzent = 100 - rotProzent - remisProzent;
+    const balken = el('div', 'favorit-balken');
+    balken.setAttribute('role', 'img');
+    balken.setAttribute('aria-label', kampf.rot.name + ' ' + rotProzent + ' %, ' + kampf.gelb.name + ' ' + gelbProzent + ' %');
+    [['rot', stand.rot], ['remis', stand.unentschieden], ['gelb', stand.gelb]].forEach(([klasse, anzahl]) => {
+        const teil = el('span', klasse);
+        teil.style.flexBasis = (anzahl * 100 / stand.gesamt) + '%';
+        balken.appendChild(teil);
+    });
+    box.appendChild(balken);
+
+    const zahlen = el('div', 'favorit-zahlen');
+    zahlen.appendChild(el('span', 'rot', rotProzent + ' %'));
+    if (stand.unentschieden > 0) {
+        zahlen.appendChild(el('span', 'remis', remisProzent + ' % Unentschieden'));
+    }
+    zahlen.appendChild(el('span', 'gelb', gelbProzent + ' %'));
+    box.appendChild(zahlen);
+    return box;
+}
+
 // Teamstand-Leiste (Kampfabend, Liveansicht)
 function teamstandLeiste(stand) {
     const leiste = el('section', 'teamstand');

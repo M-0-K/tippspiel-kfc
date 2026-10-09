@@ -2,6 +2,10 @@
 if (!isset($_SESSION)) {
     session_start();
 }
+// Liveansicht nur nach dem Login (normale User, Admin, Barkeeper)
+if (!in_array($_SESSION['KFC']['login'] ?? '', array('ok', 'Barkeeper'), true)) {
+    exit(header("Location: ../login/login.php"));
+}
 
 $publicUrl = getenv('PUBLIC_URL') ?: 'https://kulow-fighters.win';
 

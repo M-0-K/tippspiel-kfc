@@ -3,6 +3,10 @@
 if (!isset($_SESSION)) {
     session_start();
 }
+// Kämpfe nur nach dem Login (normale User, Admin, Barkeeper)
+if (!in_array($_SESSION['KFC']['login'] ?? '', array('ok', 'Barkeeper'), true)) {
+    exit(header("Location: ../login/login.php"));
+}
 
 $PageTitle = "Kampfabend";
 $aktiveSeite = "kampfabend";

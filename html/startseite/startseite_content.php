@@ -48,7 +48,7 @@
         <li class="punkte-max"><span class="punkte-chip gold">6</span> Maximal pro Kampf</li>
     </ul>
     <p class="feld-hilfe">Unentschieden richtig getippt = 3 + 1 Punkte.</p>
-    <a class="knopf knopf-rahmen knopf-breit" href="../kampfabend/kampfabend.php">Alle Kämpfe ansehen</a>
+    <a class="knopf knopf-rahmen knopf-breit" href="../login/login.php">Einloggen &amp; alle Kämpfe ansehen</a>
 </section>
 
 <section class="plakat">

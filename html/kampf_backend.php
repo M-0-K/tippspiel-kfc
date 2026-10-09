@@ -52,6 +52,7 @@ class Kampf
     public $sieger;
     public $methode;
     public $endRunde;
+    public $tippstand;      // nur bei getKaempfe: wie oft auf Rot/Gelb/Unentschieden getippt wurde
 }
 
 class Tipp
@@ -113,6 +114,12 @@ function istUser()
 function istAdmin()
 {
     return isset($_SESSION['KFC']['isadmin']) && $_SESSION['KFC']['isadmin'] === true;
+}
+
+// eingeloggt = normaler User, Admin oder Barkeeper
+function istEingeloggt()
+{
+    return in_array($_SESSION['KFC']['login'] ?? '', array('ok', 'Barkeeper'), true);
 }
 
 function istBarkeeper()
@@ -222,6 +229,29 @@ function getKaempfe($db, $kampfnachtId)
     return $kaempfe;
 }
 
+// Zuschauer-Tipps je Kampf zählen: Kampfid => {rot, gelb, unentschieden, gesamt}
+function getTippstand($db, $kampfnachtId)
+{
+    $statement = $db->prepare(
+        "SELECT t.Kampfid, SUM(t.Sieger = 'ROT') AS rot, SUM(t.Sieger = 'GELB') AS gelb,
+                SUM(t.Sieger = 'UNENTSCHIEDEN') AS unentschieden, COUNT(*) AS gesamt
+         FROM tipp t INNER JOIN kampf k ON t.Kampfid = k.Kampfid
+         WHERE k.Kampfnacht = :kid
+         GROUP BY t.Kampfid"
+    );
+    $statement->execute(array('kid' => $kampfnachtId));
+    $stand = array();
+    foreach ($statement->fetchAll() as $row) {
+        $stand[(int) $row->Kampfid] = array(
+            'rot' => (int) $row->rot,
+            'gelb' => (int) $row->gelb,
+            'unentschieden' => (int) $row->unentschieden,
+            'gesamt' => (int) $row->gesamt
+        );
+    }
+    return $stand;
+}
+
 /**
  * Punkte für einen Tipp (nur beendete Kämpfe):
  *   Sieger richtig = 3, Methode zusätzlich richtig = +1,
@@ -298,15 +328,40 @@ $postaction = ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) 
 
 // ---------- GET: öffentlich ----------
 
-if ($getaction == "getKaempfe") {
+// nur Datum + Uhrzeit des ersten Kampfes (Countdown auf der Startseite)
+if ($getaction == "getStartzeit") {
     $kid = aktuelleKampfnachtId();
+    $statement = $db->prepare("SELECT MIN(Uhrzeit) FROM kampf WHERE Kampfnacht = :kid");
+    $statement->execute(array('kid' => $kid));
+    $erster = $statement->fetchColumn();
+    antwort(array(
+        'datum' => getKampfnacht($db, $kid)->datum,
+        'time' => $erster ? date('H:i', strtotime($erster)) : null
+    ));
+}
+
+// ---------- GET: eingeloggt (User, Admin, Barkeeper) – Kämpfe, Live, Teamstand ----------
+
+if ($getaction == "getKaempfe") {
+    if (!istEingeloggt()) {
+        fehler("Bitte einloggen.", 401);
+    }
+    $kid = aktuelleKampfnachtId();
+    $kaempfe = getKaempfe($db, $kid);
+    $tippstand = getTippstand($db, $kid);
+    foreach ($kaempfe as $kampf) {
+        $kampf->tippstand = $tippstand[$kampf->kid] ?? array('rot' => 0, 'gelb' => 0, 'unentschieden' => 0, 'gesamt' => 0);
+    }
     antwort(array(
         'kampfnacht' => getKampfnacht($db, $kid),
-        'kaempfe' => getKaempfe($db, $kid)
+        'kaempfe' => $kaempfe
     ));
 }
 
 if ($getaction == "getAktiverKampf") {
+    if (!istEingeloggt()) {
+        fehler("Bitte einloggen.", 401);
+    }
     $kaempfe = getKaempfe($db, aktuelleKampfnachtId());
     $aktiv = null;
     $naechster = null;
@@ -326,6 +381,9 @@ if ($getaction == "getAktiverKampf") {
 }
 
 if ($getaction == "getTeamstand") {
+    if (!istEingeloggt()) {
+        fehler("Bitte einloggen.", 401);
+    }
     $kampfnacht = getKampfnacht($db, aktuelleKampfnachtId());
     $statement = $db->prepare(
         "SELECT SUM(Sieger = 'ROT') AS rot, SUM(Sieger = 'GELB') AS gelb, SUM(Sieger = 'UNENTSCHIEDEN') AS unentschieden,
@@ -342,6 +400,8 @@ if ($getaction == "getTeamstand") {
         'gesamt' => (int) $row->gesamt
     ));
 }
+
+// ---------- GET: öffentlich – Ranking ----------
 
 if ($getaction == "getPunkte") {
     $statement = $db->query("SELECT `Userid`, `Username` FROM `user` WHERE Enabled = 1");

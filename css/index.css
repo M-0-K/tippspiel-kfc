@@ -269,7 +269,8 @@ kbd {
     bottom: 0;
     z-index: 40;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;          /* 2 oder 4 Links, je nach Login */
     height: calc(var(--nav-hoehe) + var(--unten-sicher));
     padding-bottom: var(--unten-sicher);
     background: rgba(7, 6, 5, 0.97);

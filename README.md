@@ -62,8 +62,8 @@ Gleiches Muster wie im Kulowcup: Jede Seite hat einen eigenen Ordner mit
     ├── startseite/  register/  login/  logout/
     ├── uservalidation/         Barkeeper: Konten freischalten (mit Suche)
     ├── tippen/                 Tipps abgeben
-    ├── kampfabend/             Fight Card / Timeline (öffentlich)
-    ├── liveview/               Beamer-Ansicht mit Runde & QR-Code (Strg+Shift+P = Präsentationsmodus)
+    ├── kampfabend/             Fight Card / Timeline mit Zuschauer-Favorit (nach Login)
+    ├── liveview/               Beamer-Ansicht mit Runde & QR-Code (nach Login, Strg+Shift+P = Präsentationsmodus)
     ├── ranking/                Punkte-Rangliste
     └── adminuebersicht/        Ringsteuerung: Start, Runde, Ergebnis, Zurücksetzen
 ```
@@ -129,7 +129,7 @@ Neu aufsetzen (⚠️ löscht alle User und Tipps): `docker compose down -v && d
 4. Ring: als `Admin` einloggen → **Kampf starten** (Tipps gesperrt) → **Runde +/−** → **Kampf beenden** (Sieger, Methode, Runde).
    Bei Fehlbedienung: **Zurücksetzen**.
    Nach einem Testlauf: `DB/tools/testlauf_zuruecksetzen.sql` ausführen (löscht Tipps, setzt Kämpfe zurück).
-5. Beamer: Liveansicht öffnen, `Strg + Shift + P` blendet das Menü aus.
+5. Beamer: einloggen (z. B. als `Barkeeper`), Liveansicht öffnen, `Strg + Shift + P` blendet das Menü aus.
 6. Danach Backup ziehen und Server stoppen:
 
 ```bash

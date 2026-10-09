@@ -410,6 +410,62 @@ button.ecke:active {
     color: var(--kfc-gold-hell);
 }
 
+/* Zuschauer-Favorit: wie wurde getippt (Kampfabend) */
+.favorit {
+    margin: 0 14px 12px;
+}
+
+.favorit-kopf {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+}
+
+.favorit-label {
+    font-family: var(--schrift-display);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kfc-gold-hell);
+}
+
+.favorit-anzahl {
+    color: var(--kfc-text-leise);
+    white-space: nowrap;
+}
+
+.favorit-balken {
+    display: flex;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.favorit-balken span {
+    transition: flex-basis 0.4s ease;
+}
+
+.favorit-balken .rot { background: linear-gradient(90deg, var(--ecke-rot-dunkel), var(--ecke-rot)); }
+.favorit-balken .remis { background: var(--kfc-text-leise); }
+.favorit-balken .gelb { background: linear-gradient(90deg, var(--ecke-gelb), var(--ecke-gelb-dunkel)); }
+
+.favorit-zahlen {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.favorit-zahlen .rot { color: #ff5a6e; }
+.favorit-zahlen .gelb { color: var(--ecke-gelb); }
+.favorit-zahlen .remis { color: var(--kfc-text-leise); font-weight: 400; }
+
 /* ===== 5. Tippen ===== */
 .tipp-kopf {
     margin-bottom: 4px;

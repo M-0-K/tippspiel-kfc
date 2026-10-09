@@ -1,4 +1,4 @@
-// Kampfabend: öffentliche Fight Card mit Teamstand, aktualisiert alle 15 Sekunden
+// Kampfabend: Fight Card mit Teamstand und Zuschauer-Favorit (nur nach Login), aktualisiert alle 15 Sekunden
 // Es wird nur neu gezeichnet, wenn sich etwas geändert hat (kein Flackern)
 
 let letzterStand = '';
@@ -22,7 +22,11 @@ function ladeKampfabend() {
             liste.appendChild(leerHinweis('Die Kämpfe werden bald bekannt gegeben.'));
             return;
         }
-        daten.kaempfe.forEach(kampf => liste.appendChild(kampfKarte(kampf, false)));
+        daten.kaempfe.forEach(kampf => {
+            const karte = kampfKarte(kampf, false);
+            karte.insertBefore(favoritLeiste(kampf), karte.querySelector('.ergebnis-text'));   // über dem Ergebnis
+            liste.appendChild(karte);
+        });
     }).catch(fehler => zeigeMeldung(fehler.message, 'fehler'));
 
     getAction('getTeamstand').then(stand => {

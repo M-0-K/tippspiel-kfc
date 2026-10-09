@@ -6,6 +6,7 @@ $eingeloggt = isset($_SESSION['KFC']['login']) && $_SESSION['KFC']['login'] === 
 $istAdmin = isset($_SESSION['KFC']['isadmin']) && $_SESSION['KFC']['isadmin'] === true;
 $istBarkeeper = isset($_SESSION['KFC']['login']) && $_SESSION['KFC']['login'] === 'Barkeeper';
 $anzeigeName = $_SESSION['KFC']['Username'] ?? ($istBarkeeper ? 'Barkeeper' : '');
+$siehtKaempfe = $eingeloggt || $istBarkeeper;   // Live und Kämpfe erst nach dem Login
 
 function navLink($seite, $href, $icon, $text, $aktiveSeite)
 {
@@ -18,13 +19,15 @@ function navLink($seite, $href, $icon, $text, $aktiveSeite)
     <header class="kopf">
         <div class="kicker">Mehrere Kämpfe. Ein Abend. Ein Champion.</div>
         <div class="kopf-zeile">
-            <a class="kopf-logo" href="../../html/kampfabend/kampfabend.php" aria-label="KFC Startseite">
+            <a class="kopf-logo" href="../../html/<?= $siehtKaempfe ? 'kampfabend/kampfabend.php' : 'startseite/startseite.php' ?>" aria-label="KFC Startseite">
                 <img src="../../data/logo/kfc_logo.jpg" alt="KFC – Kulow Fighters Championship" width="180" height="96">
             </a>
 
             <nav class="nav-desktop" aria-label="Hauptmenü">
-                <?= navLink('live', '../../html/liveview/liveview.php', 'live', 'Live', $aktiveSeite) ?>
-                <?= navLink('kampfabend', '../../html/kampfabend/kampfabend.php', 'liste', 'Kämpfe', $aktiveSeite) ?>
+                <?php if ($siehtKaempfe) { ?>
+                    <?= navLink('live', '../../html/liveview/liveview.php', 'live', 'Live', $aktiveSeite) ?>
+                    <?= navLink('kampfabend', '../../html/kampfabend/kampfabend.php', 'liste', 'Kämpfe', $aktiveSeite) ?>
+                <?php } ?>
                 <?= navLink('tippen', '../../html/tippen/tippen.php', 'tippen', 'Tippen', $aktiveSeite) ?>
                 <?= navLink('ranking', '../../html/ranking/ranking.php', 'trophy', 'Ranking', $aktiveSeite) ?>
             </nav>
@@ -47,8 +50,10 @@ function navLink($seite, $href, $icon, $text, $aktiveSeite)
     </header>
 
     <nav class="nav-unten" aria-label="Navigation">
-        <?= navLink('live', '../../html/liveview/liveview.php', 'live', 'Live', $aktiveSeite) ?>
-        <?= navLink('kampfabend', '../../html/kampfabend/kampfabend.php', 'liste', 'Kämpfe', $aktiveSeite) ?>
+        <?php if ($siehtKaempfe) { ?>
+            <?= navLink('live', '../../html/liveview/liveview.php', 'live', 'Live', $aktiveSeite) ?>
+            <?= navLink('kampfabend', '../../html/kampfabend/kampfabend.php', 'liste', 'Kämpfe', $aktiveSeite) ?>
+        <?php } ?>
         <?= navLink('tippen', '../../html/tippen/tippen.php', 'tippen', 'Tippen', $aktiveSeite) ?>
         <?= navLink('ranking', '../../html/ranking/ranking.php', 'trophy', 'Ranking', $aktiveSeite) ?>
     </nav>

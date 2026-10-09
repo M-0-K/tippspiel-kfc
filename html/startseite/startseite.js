@@ -20,10 +20,9 @@ function zeigeCountdown() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    getAction('getKaempfe').then(daten => {
-        const erster = daten.kaempfe[0];
-        if (daten.kampfnacht && daten.kampfnacht.datum) {
-            ersterKampf = new Date(daten.kampfnacht.datum + 'T' + ((erster && erster.time) || '19:00') + ':00');
+    getAction('getStartzeit').then(daten => {
+        if (daten.datum) {
+            ersterKampf = new Date(daten.datum + 'T' + (daten.time || '19:00') + ':00');
             zeigeCountdown();
             setInterval(zeigeCountdown, 30000);
         }
