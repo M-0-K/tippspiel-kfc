@@ -319,6 +319,70 @@ function pruefeTipp(&$sieger, &$methode, &$runde, $maxRunden)
     return null;
 }
 
+// laufender Kampf, nächster offener Kampf und zuletzt beendeter Kampf
+function getLiveStatus($db, $kampfnachtId)
+{
+    $aktiv = null;
+    $naechster = null;
+    $letzter = null;
+    foreach (getKaempfe($db, $kampfnachtId) as $kampf) {
+        if ($kampf->status == 1 && $aktiv === null) {
+            $aktiv = $kampf;
+        }
+        if ($kampf->status == 0 && $naechster === null) {
+            $naechster = $kampf;
+        }
+        if ($kampf->status == 2) {
+            $letzter = $kampf;
+        }
+    }
+    return array('aktiv' => $aktiv, 'naechster' => $naechster, 'letzter' => $letzter);
+}
+
+// gewonnene Kämpfe je Team
+function getTeamstandDaten($db)
+{
+    $kampfnacht = getKampfnacht($db, aktuelleKampfnachtId());
+    $statement = $db->prepare(
+        "SELECT SUM(Sieger = 'ROT') AS rot, SUM(Sieger = 'GELB') AS gelb, SUM(Sieger = 'UNENTSCHIEDEN') AS unentschieden,
+                COUNT(*) AS gesamt, SUM(Status = 2) AS beendet
+         FROM kampf WHERE Kampfnacht = :kid"
+    );
+    $statement->execute(array('kid' => $kampfnacht->kid));
+    $row = $statement->fetch();
+    return array(
+        'rot' => array('team' => $kampfnacht->teamRot, 'siege' => (int) $row->rot),
+        'gelb' => array('team' => $kampfnacht->teamGelb, 'siege' => (int) $row->gelb),
+        'unentschieden' => (int) $row->unentschieden,
+        'beendet' => (int) $row->beendet,
+        'gesamt' => (int) $row->gesamt
+    );
+}
+
+// Bilder/Videos für den Hallen-Monitor aus data/monitor/<ordner>, sortiert nach Dateiname
+const MONITOR_ORDNER = array('rueckblick', 'sponsoren');
+const MONITOR_BILDER = array('jpg', 'jpeg', 'png', 'webp', 'gif');
+const MONITOR_VIDEOS = array('mp4', 'webm');
+
+function monitorMedien($ordner)
+{
+    $dateien = glob(__DIR__ . '/../data/monitor/' . $ordner . '/*') ?: array();
+    natcasesort($dateien);
+    $medien = array();
+    foreach ($dateien as $pfad) {
+        $endung = strtolower(pathinfo($pfad, PATHINFO_EXTENSION));
+        if (in_array($endung, MONITOR_BILDER, true)) {
+            $typ = 'bild';
+        } elseif (in_array($endung, MONITOR_VIDEOS, true)) {
+            $typ = 'video';
+        } else {
+            continue;
+        }
+        $medien[] = array('datei' => basename($pfad), 'typ' => $typ, 'v' => filemtime($pfad));
+    }
+    return $medien;
+}
+
 // ============================================================
 // 3. Action-Handler
 // ============================================================
@@ -362,43 +426,26 @@ if ($getaction == "getAktiverKampf") {
     if (!istEingeloggt()) {
         fehler("Bitte einloggen.", 401);
     }
-    $kaempfe = getKaempfe($db, aktuelleKampfnachtId());
-    $aktiv = null;
-    $naechster = null;
-    $letzter = null;
-    foreach ($kaempfe as $kampf) {
-        if ($kampf->status == 1 && $aktiv === null) {
-            $aktiv = $kampf;
-        }
-        if ($kampf->status == 0 && $naechster === null) {
-            $naechster = $kampf;
-        }
-        if ($kampf->status == 2) {
-            $letzter = $kampf;
-        }
-    }
-    antwort(array('aktiv' => $aktiv, 'naechster' => $naechster, 'letzter' => $letzter));
+    antwort(getLiveStatus($db, aktuelleKampfnachtId()));
 }
 
 if ($getaction == "getTeamstand") {
     if (!istEingeloggt()) {
         fehler("Bitte einloggen.", 401);
     }
-    $kampfnacht = getKampfnacht($db, aktuelleKampfnachtId());
-    $statement = $db->prepare(
-        "SELECT SUM(Sieger = 'ROT') AS rot, SUM(Sieger = 'GELB') AS gelb, SUM(Sieger = 'UNENTSCHIEDEN') AS unentschieden,
-                COUNT(*) AS gesamt, SUM(Status = 2) AS beendet
-         FROM kampf WHERE Kampfnacht = :kid"
-    );
-    $statement->execute(array('kid' => $kampfnacht->kid));
-    $row = $statement->fetch();
-    antwort(array(
-        'rot' => array('team' => $kampfnacht->teamRot, 'siege' => (int) $row->rot),
-        'gelb' => array('team' => $kampfnacht->teamGelb, 'siege' => (int) $row->gelb),
-        'unentschieden' => (int) $row->unentschieden,
-        'beendet' => (int) $row->beendet,
-        'gesamt' => (int) $row->gesamt
-    ));
+    antwort(getTeamstandDaten($db));
+}
+
+// ---------- GET: öffentlich – Hallen-Monitor (unverlinkte Seite, ohne Login) ----------
+
+if ($getaction == "getMonitor") {
+    $daten = getLiveStatus($db, aktuelleKampfnachtId());
+    $daten['teamstand'] = getTeamstandDaten($db);
+    $daten['medien'] = array();
+    foreach (MONITOR_ORDNER as $ordner) {
+        $daten['medien'][$ordner] = monitorMedien($ordner);
+    }
+    antwort($daten);
 }
 
 // ---------- GET: öffentlich – Ranking ----------
