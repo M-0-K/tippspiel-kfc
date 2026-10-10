@@ -16,6 +16,7 @@ Aufbau und Programmierstil sind wie beim [Tippspiel Kulowcup](https://github.com
 - [Architektur](#-architektur)
 - [Start mit Docker](#-start-mit-docker)
 - [Ablauf am Abend](#-ablauf-am-abend)
+- [Hallen-Monitor](#-hallen-monitor)
 - [Kämpfer & Kämpfe pflegen](#-kämpfer--kämpfe-pflegen)
 - [Bilder / Assets](#-bilder--assets)
 
@@ -49,6 +50,7 @@ Gleiches Muster wie im Kulowcup: Jede Seite hat einen eigenen Ordner mit
 ├── css/index.css               globales Theme (Variablen oben in :root)
 ├── css/fightcard.css           Kampfkarten, Timeline, Teamstand, Liveansicht, Admin
 ├── data/                       weboptimierte Bilder, Logos, Schriften
+├── data/monitor/               Bilder & Videos für den Hallen-Monitor (rueckblick/, sponsoren/)
 ├── DB/01_erstellungsscript_kfc.sql   Tabellen
 ├── DB/02_kampfnacht_2026.sql         Teams, Kämpfer, Kämpfe (hier Namen eintragen)
 ├── docs/db-modell.puml         Datenbankmodell (PlantUML)
@@ -64,6 +66,7 @@ Gleiches Muster wie im Kulowcup: Jede Seite hat einen eigenen Ordner mit
     ├── tippen/                 Tipps abgeben
     ├── kampfabend/             Fight Card / Timeline mit Zuschauer-Favorit (nach Login)
     ├── liveview/               Beamer-Ansicht mit Runde & QR-Code (nach Login, Strg+Shift+P = Präsentationsmodus)
+    ├── monitor_k7x2/           Hallen-Monitor: Live-Kampf, sonst Rückblick/Sponsoren-Diashow (ohne Login, nicht verlinkt)
     ├── ranking/                Punkte-Rangliste
     └── adminuebersicht/        Ringsteuerung: Start, Runde, Ergebnis, Zurücksetzen
 ```
@@ -130,12 +133,34 @@ Neu aufsetzen (⚠️ löscht alle User und Tipps): `docker compose down -v && d
    Bei Fehlbedienung: **Zurücksetzen**.
    Nach einem Testlauf: `DB/tools/testlauf_zuruecksetzen.sql` ausführen (löscht Tipps, setzt Kämpfe zurück).
 5. Beamer: einloggen (z. B. als `Barkeeper`), Liveansicht öffnen, `Strg + Shift + P` blendet das Menü aus.
+   Monitor in der Halle: siehe [Hallen-Monitor](#-hallen-monitor).
 6. Danach Backup ziehen und Server stoppen:
 
 ```bash
 docker exec kfc_mariadb mariadb-dump -uroot -p"$MYSQL_ROOT_PASSWORD" tippspiel > DB/backup/KFC_2026.sql
 docker compose down
 ```
+
+## 📺 Hallen-Monitor
+
+Eigene Seite für einen Monitor in der Halle, **ohne Login** und **nirgends verlinkt**:
+
+```
+https://kulow-fighters.win/html/monitor_k7x2/monitor.php
+```
+
+- **Kampf läuft** (Admin hat „Kampf starten“ gedrückt) → nur der Live-Kampf mit Runde und Teamstand.
+- **Kampf beendet** → 30 Sekunden das Ergebnis, danach die Diashow.
+- **Kein Kampf** → Diashow abwechselnd aus `data/monitor/rueckblick/` und `data/monitor/sponsoren/`,
+  nach jeweils 5 Bildern eine Info-Folie (letztes Ergebnis / „Als Nächstes“ + Teamstand).
+- Formate: `jpg`, `jpeg`, `png`, `webp`, `gif` (8 Sekunden) und `mp4`, `webm` (stumm, bis zum Ende).
+  Reihenfolge = Dateiname, also z. B. `01_einlauf.jpg`, `02_ko.jpg`.
+- Neue Dateien einfach in den Ordner legen (git push + `git pull` auf dem Server, Upload in code-server oder `scp`) –
+  sie laufen nach wenigen Sekunden mit, ohne die Seite neu zu laden. Gelöschte Dateien fallen raus.
+- Bilder vorher verkleinern (z. B. 1920 px breit, ~300 KB), sonst ruckelt es am Monitor.
+- Die Adresse ist nur „versteckt“: wer sie kennt, sieht Live-Stand und Bilder (keine Tipps/Benutzer).
+  Andere Adresse gewünscht → Ordner `html/monitor_k7x2` umbenennen.
+- Einstellungen (Anzeigedauer, Info-Folie alle X Bilder, …) oben in `html/monitor_k7x2/monitor.js`.
 
 ## ✏️ Kämpfer & Kämpfe pflegen
 

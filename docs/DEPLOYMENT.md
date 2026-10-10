@@ -221,9 +221,13 @@ Kpid 1–7 = Rote Funken, Kpid 11–17 = Lange Garde (siehe `DB/02_kampfnacht_20
 | Vorab (PN) | Gäste schicken Moritz ihren Benutzernamen → als `Admin` oder `Barkeeper` → **Freischalten** (geht schon am Vorabend) | Handy |
 | Ring | Login `Admin` → **Kampf starten** → **Runde +** → **Kampf beenden** (Sieger, Methode, Runde) | Handy am Ring |
 | Beamer | `https://kulow-fighters.win/html/liveview/liveview.php` → vorher einloggen (z. B. als `Barkeeper`), dann `Strg + Shift + P` (Menü weg) | Laptop am Beamer |
+| Hallen-Monitor | `https://kulow-fighters.win/html/monitor_k7x2/monitor.php` (kein Login), Vollbild mit `F11` oder `chrome --kiosk <URL>` | PC/Stick am Monitor |
 
 - Ein Kampf ist ab **"Kampf starten"** für Tipps gesperrt.
 - Falsch eingetragen? **"Zurücksetzen"** setzt den Kampf wieder auf "geplant".
+- Hallen-Monitor: Rückblick- und Sponsorenbilder nach `data/monitor/rueckblick/` bzw. `data/monitor/sponsoren/` legen –
+  per `git push` und auf dem Server `cd /opt/kfc && git pull`, oder direkt in code-server hochladen. Sie laufen ohne Neuladen mit
+  (Details: README, Abschnitt *Hallen-Monitor*).
 - QR-Code zum Ausdrucken: Liveansicht am Laptop öffnen, QR-Code unten rechts abfotografieren oder screenshotten.
 
 ## 10. Nach dem Abend: Backup & Abschalten
