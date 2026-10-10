@@ -1101,3 +1101,57 @@ button.ecke:active {
         text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
     }
 }
+
+/* ===== 10. Hallen-Monitor (html/monitor_k7x2) ===== */
+.seite-monitor {
+    overflow: hidden;
+    cursor: none;
+}
+
+/* Diashow im Vollbild über allem, zwei Puffer zum Überblenden */
+#monitor-show {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: #000;
+}
+
+.monitor-medium {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.monitor-medium.sichtbar {
+    opacity: 1;
+}
+
+.monitor-medium img,
+.monitor-medium video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.monitor-label {
+    position: absolute;
+    left: 24px;
+    bottom: 20px;
+    z-index: 2;
+    padding: 6px 16px;
+    border: 1px solid var(--kfc-gold);
+    border-radius: var(--radius-klein);
+    background: rgba(0, 0, 0, 0.7);
+    font-family: var(--schrift-titel);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--kfc-gold-hell);
+}
+
+body.diashow #presentation-clock {
+    display: none;
+}
